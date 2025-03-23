@@ -9,5 +9,5 @@ RUN pnpm run build
 
 ENV NODE_ENV=production
 ENV PATH=/app/node_modules/.bin:$PATH
-EXPOSE 3000
+EXPOSE 3001
 CMD ["pnpm", "start"]
