@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 
 export async function GET(request: Request) {
     const providerName = process.env.PROVIDER_NAME || 'gpt-4o-mini model';
-    const picturePath = process.env.PICTURE_PATH || 'public/4o_mini_image.png';
+    const picturePath = process.env.PICTURE_PATH || '4o_mini_image.png';
     const publicIp = process.env.PUBLIC_IP || '46.17.103.110:3001/';
     const imageResponse = await fetch(new URL(picturePath, `http://${publicIp}`));
     const imageBuffer = await imageResponse.arrayBuffer();
