@@ -1,8 +1,8 @@
 ![Chatbot Banner](./qulang-banner-rounded.png)
 
-# Chatbot
+# example-openai-provider
 
-Chatbot is a Next.js application that provides a simple API to retrieve provider information (model name, picture path, and provider description) loaded directly from environment variables.
+Example-openai-provider is a Next.js application that provides a simple API to retrieve provider information (model name, picture path, and provider description) loaded directly from environment variables.
 
 ## Features
 
