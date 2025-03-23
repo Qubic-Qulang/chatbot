@@ -1,17 +1,28 @@
-import { openai } from "@ai-sdk/openai"
-import { streamText } from "ai"
+import { OpenAIStream, StreamingTextResponse } from "ai"
+import OpenAI from "openai"
 
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30
+// Create an OpenAI API client
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY,
+})
 
 export async function POST(req: Request) {
+  // Extract the `messages` from the body of the request
   const { messages } = await req.json()
 
-  const result = streamText({
-    model: openai("gpt-4o-mini"),
-    messages,
+  // Request the OpenAI API for the response based on the prompt
+  const response = await openai.chat.completions.create({
+    model: "gpt-4o-mini",
+    stream: true,
+    messages: messages,
   })
 
-  return result.toDataStreamResponse()
+  // Convert the response into a friendly text-stream
+  const stream = OpenAIStream(response)
+
+  // Respond with the stream
+  return new StreamingTextResponse(stream)
 }
+
+
 
