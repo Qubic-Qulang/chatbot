@@ -12,8 +12,8 @@ export async function GET(request: Request) {
     const info = {
         provider_name: providerName,
         picturePath: imageResponse.url,
-        base64Image: base64Image,
-        provider_description: providerDescription
+        provider_description: providerDescription,
+        base64Image: base64Image
 
     };
 
