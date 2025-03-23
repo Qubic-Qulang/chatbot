@@ -1,17 +1,14 @@
-import { openai } from "@ai-sdk/openai"
-import { streamText } from "ai"
-
-// Allow streaming responses up to 30 seconds
-export const maxDuration = 30
+import { createOpenRouter } from '@openrouter/ai-sdk-provider';
+import { streamText } from 'ai';
 
 export async function POST(req: Request) {
-  const { messages } = await req.json()
-
-  const result = streamText({
-    model: openai("gpt-4o-mini"),
+  const { messages } = await req.json();
+  const openrouter = createOpenRouter({
+    apiKey: process.env.OPENROUTER_API_KEY, // Ta clé API stockée en variable d'environnement
+  });
+  const result = await streamText({
+    model: openrouter("deepseek/deepseek-r1:free"), // Remplace par le modèle souhaité
     messages,
-  })
-
-  return result.toDataStreamResponse()
+  });
+  return result.toDataStreamResponse();
 }
-
