@@ -7,11 +7,13 @@ export async function GET(request: Request) {
     if (!imageResponse.ok) {
         throw new Error('Failed to fetch the image');
     }
+    const imageBuffer = await imageResponse.arrayBuffer();
+    const base64Image = `data:${imageResponse.headers.get('content-type')};base64,${Buffer.from(imageBuffer).toString('base64')}`;
     const providerDescription = process.env.PROVIDER_DESCRIPTION || 'Default provider with gpt-4o-mini model';
 
     const info = {
         provider_name: providerName,
-        picture_path: picturePath,
+        base64Image: base64Image,
         provider_description: providerDescription
     };
 
