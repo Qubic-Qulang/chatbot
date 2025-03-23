@@ -7,9 +7,9 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "AI Assistant | Powered by GPT-4o-mini",
-  description: "A responsive chatbot application using OpenAI GPT-4o-mini",
-    generator: 'v0.dev'
+  title: "Qulang",
+  description: "A responsive chatbot",
+    generator: 'qulang dev team'
 }
 
 export default function RootLayout({

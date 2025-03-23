@@ -84,7 +84,7 @@ export default function ChatPage() {
 
       {/* Footer */}
       <footer className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>Powered by OpenAI GPT-4o-mini • {new Date().getFullYear()}</p>
+        <p>Powered by Qulang • {new Date().getFullYear()}</p>
       </footer>
     </div>
   )
