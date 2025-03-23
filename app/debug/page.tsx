@@ -1,92 +1,112 @@
 "use client"
 
-import { useChat } from "@ai-sdk/react"
-import { useRef, useEffect } from "react"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Send, Loader2 } from "lucide-react"
-import { Logo } from "@/components/logo"
+import { useChat } from "ai/react"
+import { useState, useRef, useEffect } from "react"
+import { Send } from "lucide-react"
 
-export default function ChatPage() {
+export default function ChatInterface() {
   const { messages, input, handleInputChange, handleSubmit, isLoading } = useChat()
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const [scrolled, setScrolled] = useState(false)
 
   // Auto-scroll to bottom when new messages arrive
   useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" })
-    }
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }, [messages])
 
-  return (
-    <div className="flex flex-col min-h-screen">
-      {/* Header with gradient background */}
-      <header className="brand-gradient text-white shadow-md">
-        <div className="container flex items-center h-16 px-4 mx-auto">
-          <Logo />
-        </div>
-      </header>
+  // Handle scroll effect for header
+  useEffect(() => {
+    const handleScroll = () => {
+      if (messagesEndRef.current) {
+        const container = messagesEndRef.current.parentElement
+        if (container) {
+          setScrolled(container.scrollTop > 0)
+        }
+      }
+    }
 
-      {/* Main content */}
-      <main className="flex-1 container mx-auto p-4 flex flex-col max-w-3xl">
-        {/* Chat messages */}
-        <div className="flex-1 overflow-y-auto mb-4 space-y-4 min-h-[calc(100vh-12rem)]">
+    const container = messagesEndRef.current?.parentElement
+    if (container) {
+      container.addEventListener("scroll", handleScroll)
+      return () => container.removeEventListener("scroll", handleScroll)
+    }
+  }, [])
+
+  return (
+    <div className="flex flex-col h-[100dvh] bg-black text-white">
+      {/* Header */}
+      <div
+        className={`sticky top-0 z-10 transition-colors duration-300 ${scrolled ? "bg-black/80 backdrop-blur-sm" : "bg-transparent"}`}
+      >
+        <div className="container mx-auto py-6 px-4">
+          <h1 className="text-4xl font-thin">Chat Interface</h1>
+          <p className="text-zinc-400 text-sm mt-1">Powered by AI</p>
+        </div>
+      </div>
+
+      {/* Messages Container */}
+      <div className="flex-1 overflow-y-auto px-4 py-4">
+        <div className="container mx-auto max-w-4xl">
           {messages.length === 0 ? (
-            <div className="flex items-center justify-center h-full">
-              <div className="text-center space-y-6 max-w-md">
-                <div className="w-24 h-24 mx-auto brand-gradient rounded-full flex items-center justify-center">
-                  <span className="text-white text-4xl font-bold">!</span>
-                </div>
-                <h2 className="text-2xl font-bold brand-gradient-text">How can I help you today?</h2>
-                <p className="text-gray-500 dark:text-gray-400">
-                  Ask me anything and I'll do my best to assist you with accurate and helpful information.
-                </p>
-              </div>
+            <div className="flex flex-col items-center justify-center h-full text-center py-20">
+              <p className="text-2xl font-thin mb-4">Welcome to the conversation</p>
+              <p className="text-zinc-400 max-w-md">
+                Start chatting with the AI assistant. Ask questions, get information, or just have a conversation.
+              </p>
             </div>
           ) : (
             messages.map((message) => (
-              <div key={message.id} className={`flex ${message.role === "user" ? "justify-end" : "justify-start"}`}>
-                <div
-                  className={`max-w-[80%] rounded-lg px-4 py-2 ${
-                    message.role === "user" ? "message-bubble-user" : "message-bubble-ai"
-                  }`}
-                >
-                  <p className="whitespace-pre-wrap">{message.content}</p>
+              <div key={message.id} className={`mb-6 ${message.role === "user" ? "ml-auto" : ""}`}>
+                <div className="flex items-start gap-3">
+                  {message.role !== "user" && (
+                    <div className="w-8 h-8 bg-primary-50 flex items-center justify-center text-black">AI</div>
+                  )}
+                  <div className={`max-w-[80%] ${message.role === "user" ? "ml-auto bg-zinc-900" : "bg-zinc-800"} p-4`}>
+                    <div className="text-sm">
+                      {message.content.split("\n").map((text, i) => (
+                        <p key={i} className={i > 0 ? "mt-2" : ""}>
+                          {text}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
+                  {message.role === "user" && (
+                    <div className="w-8 h-8 bg-zinc-700 flex items-center justify-center">You</div>
+                  )}
                 </div>
               </div>
             ))
           )}
           <div ref={messagesEndRef} />
         </div>
+      </div>
 
-        {/* Input form */}
-        <form
-          onSubmit={handleSubmit}
-          className="flex items-center space-x-2 bg-white dark:bg-gray-800 p-2 rounded-lg border border-gray-200 dark:border-gray-700 shadow-sm"
-        >
-          <Input
-            value={input}
-            onChange={handleInputChange}
-            placeholder="Type your message..."
-            className="flex-1 border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
-            disabled={isLoading}
-          />
-          <Button
-            type="submit"
-            size="icon"
-            disabled={isLoading || !input.trim()}
-            className="brand-gradient text-white hover:opacity-90 transition-opacity"
-          >
-            {isLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
-          </Button>
-        </form>
-      </main>
-
-      {/* Footer */}
-      <footer className="py-4 text-center text-sm text-gray-500 dark:text-gray-400">
-        <p>Powered by Qulang • {new Date().getFullYear()}</p>
-      </footer>
+      {/* Input Area */}
+      <div className="border-t border-zinc-800 bg-black">
+        <div className="container mx-auto max-w-4xl px-4 py-4">
+          <form onSubmit={handleSubmit} className="flex items-center gap-2">
+            <input
+              type="text"
+              value={input}
+              onChange={handleInputChange}
+              placeholder="Type your message..."
+              className="flex-1 bg-zinc-900 p-4 text-white outline-none focus:ring-1 focus:ring-primary-50"
+              disabled={isLoading}
+            />
+            <button
+              type="submit"
+              disabled={isLoading || !input.trim()}
+              className="bg-primary-50 hover:bg-primary-70 transition-colors p-4 text-black disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-black border-t-transparent rounded-full animate-spin" />
+              ) : (
+                <Send size={20} />
+              )}
+            </button>
+          </form>
+        </div>
+      </div>
     </div>
   )
 }
-
